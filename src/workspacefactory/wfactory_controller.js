@@ -49,12 +49,25 @@
 function WorkspaceFactoryController(toolboxName, toolboxDiv, previewDiv) {
   // Toolbox XML element for the editing workspace.
   this.toolbox = document.getElementById(toolboxName);
-  // Dictionary of toolboxes. Has at least one (default) toolbox.
-  this.toolboxList = {
-    '': '<xml></xml>'
-  };
-  // Currently displayed toolbox.
+  // Currently displayed toolbox. Upon init, the current toolbox name is
+  // the default toolbox name, which is the empty string. Users are forced
+  // to rename this once they create multiple toolboxes.
   this.currentToolbox = '';
+
+  // Model to keep track of categories and blocks.
+  this.model = new WorkspaceFactoryModel();
+  // Updates the category tabs.
+  this.view = new WorkspaceFactoryView();
+  // Generates XML for categories.
+  this.generator = new WorkspaceFactoryGenerator(this.model);
+  // Tracks which editing mode the user is in. Toolbox mode on start.
+  this.selectedMode = WorkspaceFactoryController.MODE_TOOLBOX;
+  // True if key events are enabled, false otherwise.
+  this.keyEventsEnabled = true;
+  // True if there are unsaved changes in the toolbox, false otherwise.
+  this.hasUnsavedToolboxChanges = false;
+  // True if there are unsaved changes in the preloaded blocks, false otherwise.
+  this.hasUnsavedPreloadChanges = false;
 
   // Workspace for user to drag blocks in for a certain category.
   this.toolboxWorkspace = Blockly.inject(toolboxDiv,
@@ -75,26 +88,11 @@ function WorkspaceFactoryController(toolboxName, toolboxDiv, previewDiv) {
        colour: '#ccc',
        snap: true},
      media: 'media/',
-     toolbox: this.toolboxList[this.currentToolbox],
+     toolbox: this.model.toolboxList[this.currentToolbox],
      zoom:
        {controls: true,
         wheel: true}
     });
-
-  // Model to keep track of categories and blocks.
-  this.model = new WorkspaceFactoryModel();
-  // Updates the category tabs.
-  this.view = new WorkspaceFactoryView();
-  // Generates XML for categories.
-  this.generator = new WorkspaceFactoryGenerator(this.model);
-  // Tracks which editing mode the user is in. Toolbox mode on start.
-  this.selectedMode = WorkspaceFactoryController.MODE_TOOLBOX;
-  // True if key events are enabled, false otherwise.
-  this.keyEventsEnabled = true;
-  // True if there are unsaved changes in the toolbox, false otherwise.
-  this.hasUnsavedToolboxChanges = false;
-  // True if there are unsaved changes in the preloaded blocks, false otherwise.
-  this.hasUnsavedPreloadChanges = false;
 }
 
 // Toolbox editing mode. Changes the user makes to the workspace updates the
@@ -110,23 +108,17 @@ WorkspaceFactoryController.MODE_XML = 'xml';
 
 /**
  * Creates a new toolbox for editing. Saves previously edited toolbox, and prompts
- * user if previous toolbox has not been saved under a user-specified name.
+ * user if previous toolbox has not been saved under a user-specified name. Initial
+ * default name of toolbox is the empty string, and is considered an un-named
+ * toolbox that the user will eventually rename if they add another toolbox.
  */
 WorkspaceFactoryController.prototype.newToolbox = function() {
-  let prevToolbox = this.currentToolbox;
-  console.log("About to create new toolbox. Current is " + prevToolbox + ".");
-  // Make sure previous toolbox has been saved.
-  if (this.saveToolbox()) {
-    this.currentToolbox = '';
-    let proceed = this.renameToolbox(this.currentToolbox, prompt('Name your new toolbox.'));
-    if (proceed) {
-      this.toolboxList[this.currentToolbox] = '<xml></xml>';
-      this.showToolbox(this.currentToolbox);
-    } else {
-      this.currentToolbox = prevToolbox;
-    }
-  }
-  console.log("New toolbox created. New toolbox name is " + this.currentToolbox);
+  // TODO: implement
+  // Prompt user for name of new toolbox.
+  // Check if name is valid / taken.
+  // If taken, prompt again.
+  // If not taken, model.addToolbox(newName).
+  // Show toolbox after successful naming.
 };
 
 /**
@@ -135,52 +127,10 @@ WorkspaceFactoryController.prototype.newToolbox = function() {
  * @returns {boolean} If saved successfully.
  */
 WorkspaceFactoryController.prototype.saveToolbox = function() {
-  let proceed = true;
-
-  // Updates XML stored into this.currentToolbox.
-  let toolboxXml = Blockly.Xml.domToPrettyText(
-        this.generator.generateToolboxXml());
-
-  // If current toolbox hasn't yet been saved, prompt for a name.
-  if (this.currentToolbox === '' && !this.isEmptyToolbox(toolboxXml)) {
-    proceed = proceed && this.renameToolbox('', prompt('Your current toolbox is not ' +
-        'saved. Please provide a toolbox name.'));
-  }
-
-  if (proceed) {
-    this.toolboxList[this.currentToolbox] = toolboxXml;
-    console.log("Successfully saved toolbox, " + this.currentToolbox + ".");
-    console.log("this.toolboxList after saving: ");
-    console.log(this.toolboxList);
-  }
-
-  return proceed;
-};
-
-/**
- * Returns true if XML string of given toolbox contains no blocks nor
- * categories. A toolbox is considered empty if and only if the XML string contains
- * only the opening and closing xml tags (with or without attributes) (e.g.
- * '<xml></xml>' or '<xml id=""></xml>', etc.), and if there is only whitespace
- * between the xml tags (and no alphanumeric/symbol values).
- *
- * @param {string} xml XML String to be compared.
- * @returns {boolean} If toolbox is empty.
- */
-WorkspaceFactoryController.prototype.isEmptyToolbox = function(xml) {
-  try {
-    let noExtraCloseBracket = xml.match(/>/g).length == 2;
-    let noExtraOpenBracket = xml.match(/</g).length == 2;
-    let whitespace = />( |\n)*</g;
-    let onlyWhitepsaceBetweenBracket = whitespace.test(xml);
-    return (noExtraCloseBracket || false) &&
-        (noExtraOpenBracket || false) &&
-        (onlyWhitepsaceBetweenBracket || false);
-  } catch (e) {
-    // If null pointer exception (or other errors), there are no matches
-    // and we consider the toolbox not empty.
-    return false;
-  }
+  // TODO: implement
+  // Check if current toolbox has a name (model.ifNamedToolbox()).
+  // If no name, prompt user to name current toolbox.
+  // If named, model.updateToolbox(model.currentToolbox).
 };
 
 /**
@@ -191,22 +141,10 @@ WorkspaceFactoryController.prototype.isEmptyToolbox = function(xml) {
  *     workspace.
  */
 WorkspaceFactoryController.prototype.showToolbox = function(name) {
-  name = FactoryUtils.addEscape(name);
-
-  if (this.toolboxNameIsTaken(name)) {
-    // Clear workspace.
-    this.clearAll(false);
-    // Change currentToolbox pointer
-    this.currentToolbox = name;
-    console.log("Showing " + name);
-    // Display new toolbox.
-    this.importToolboxFromTree_(
-        Blockly.Xml.textToDom(this.toolboxList[this.currentToolbox]));
-    return true;
-  } else {
-    confirm('This toolbox name does not exist.');
-    return false;
-  }
+  // TODO: implement
+  // Check if name exists (model.toolboxNameIsTaken()).
+  // If exists, display model.toolboxList[name].
+  // If name DNE within list, prompt user.
 };
 
 /**
@@ -220,41 +158,11 @@ WorkspaceFactoryController.prototype.showToolbox = function(name) {
  * @returns {boolean} True if successfully renamed.
  */
 WorkspaceFactoryController.prototype.renameToolbox = function(originalName, newName) {
-  // If user does not give valid input, do not change the name. Warn user.
-  if (newName === null) {
-    console.log("Rename from " + originalName + " to " + newName + " failed. newName is null.");
-    return false;
-  } else if (newName.trim() === '') {
-    console.log("Rename from " + originalName + " to " + newName + " failed. Asked for rename.");
-    return this.renameToolbox(originalName, prompt('Invalid name. Please rename.'));
-  } else if (this.toolboxNameIsTaken(newName)) {
-    console.log("Rename from " + originalName + " to " + newName + " failed. Name already exists.");
-    if (confirm('A toolbox already exists under this name. Would you like to ' +
-        'replace it?')) {
-      delete this.toolboxList[newName];
-      return this.renameToolbox(originalName, newName);
-    } else {
-      return false;
-    }
-  }
-
-  newName = newName.trim();
-  this.currentToolbox = FactoryUtils.addEscape(newName);
-  delete this.toolboxList[originalName];
-  this.toolboxList[this.currentToolbox] = Blockly.Xml.domToPrettyText(
-        this.generator.generateToolboxXml());
-  console.log("Renamed " + originalName + " to " + newName + " successfully.");
-  console.log("New this.toolboxList: ");
-  console.log(this.toolboxList);
-  return true;
-};
-
-/**
- * Indicates whether a given toolbox name is already taken (i.e. user has already
- * previously named a toolbox under that given name).
- */
-WorkspaceFactoryController.prototype.toolboxNameIsTaken = function(name) {
-  return this.toolboxList[name] !== undefined;
+  // TODO: implement
+  // Prompt user for new toolbox name
+  // Check if newName is valid (model.toolboxNameIsTaken())
+  // If valid, model.renameToolbox(originalName, newName)
+  // Else prompt again.
 };
 
 /**
@@ -559,55 +467,30 @@ WorkspaceFactoryController.prototype.exportJsFile = function(exportMode) {
 
 /**
  * Tied to "Export" button. Gets multiple file names from user to download
- * all toolboxes defined within application. Downloads as XML file.
+ * all toolboxes defined within application. Downloads as XML files. Prompts
+ * user n number of times for n toolboxes in file (will be updated to more
+ * efficient method later).
  *
  * @param {string} exportMode Component of project being exported; either
  *     toolbox (WorkspaceFactoryController.MODE_TOOLBOX) or preloaded workspace
  *     (WorkspaceFactoryController.MODE_PRELOAD).
  */
 WorkspaceFactoryController.prototype.exportAllXml = function(exportMode) {
-  if (exportMode == WorkspaceFactoryController.MODE_TOOLBOX) {
-    for (let key in this.toolboxList) {
-      // Download file.
-      var data = new Blob([this.toolboxList[key]], {type: 'text/xml'});
-      this.view.createAndDownloadFile(key + '.xml', data);
-    }
-  } else if (exportMode == WorkspaceFactoryController.MODE_PRELOAD) {
-    // TODO: Allow multiple workspaces to be created and downloaded.
-  } else {
-    // Unknown mode. Throw error.
-    throw new Error ("Unknown export mode: " + exportMode);
-  }
+  // TODO: implement
 };
 
 /**
  * Tied to "Export" button. Gets multiple file names from user to download
  * all toolboxes defined within application. Downloads as JavaScript file.
+ * Prompts the user n number of times for n toolboxes in file (will be updated
+ * to more efficient method later).
  *
  * @param {string} exportMode Component of project being exported; either
  *     toolbox (WorkspaceFactoryController.MODE_TOOLBOX) or preloaded workspace
  *     (WorkspaceFactoryController.MODE_PRELOAD).
  */
 WorkspaceFactoryController.prototype.exportAllJs = function(exportMode) {
-  console.log('this.toolboxList: ' + this.toolboxList);
-  if (exportMode == WorkspaceFactoryController.MODE_TOOLBOX) {
-    for (let key in this.toolboxList) {
-      console.log('Current key: ' + key);
-      // Generate JS.
-      let configJs = this.generator.generateJsFromXml(this.toolboxList[key],
-          key,
-          exportMode);
-
-      // Download file.
-      var data = new Blob([configJs], {type: 'text/javascript'});
-      this.view.createAndDownloadFile(key + '.js', data);
-    }
-  } else if (exportMode == WorkspaceFactoryController.MODE_PRELOAD) {
-    // TODO: Allow multiple workspaces to be created and downloaded.
-  } else {
-    // Unknown mode. Throw error.
-    throw new Error ("Unknown export mode: " + exportMode);
-  }
+  // TODO: implement
 };
 
 /**

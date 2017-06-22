@@ -57,7 +57,78 @@ WorkspaceFactoryModel = function() {
   this.libBlockTypes = [];
   // Imported block types.
   this.importedBlockTypes = [];
-  //
+  // Dictionary of toolboxes. Has at least one (default) toolbox.
+  this.toolboxList = {
+    '': '<xml></xml>'
+  };
+};
+
+// TOOLBOX METHODS.
+// TODO(#44): Refactor code to separate file.
+
+/**
+ * Creates a new toolbox for users to modify and edit.
+ *
+ * @param {string} name Name of new toolbox to add.
+ */
+WorkspaceFactoryModel.prototype.addToolbox = function(name) {
+  // TODO: Implement.
+};
+
+/**
+ * Verifies if current toolbox has yet been named by user.
+ *
+ * @returns {boolean} If named.
+ */
+WorkspaceFactoryModel.prototype.ifNamedToolbox = function() {
+  // TODO: Implement.
+};
+
+/**
+ * Updates XML string stored under given toolbox name. XML string
+ * retrieved from current workspace.
+ *
+ * @param {string} name Name of toolbox to update workspace XML into.
+ * @param {string} xml String representation of XML to be stored into
+ *    toolboxList[name].
+ * @returns {boolean} If updated successfully.
+ */
+WorkspaceFactoryModel.prototype.updateToolbox = function(name, xml) {
+  // TODO: Implement.
+};
+
+/**
+ * Renames toolbox from oldName to newName. Catches for duplicates and invalid
+ * names (empty strings, etc.).
+ *
+ * @returns {boolean} If renamed successfully.
+ */
+WorkspaceFactoryModel.prototype.renameToolbox = function(oldName, newName) {
+  // TODO: Implement.
+};
+
+/**
+ * Indicates whether a given toolbox name is already taken (i.e. user has already
+ * previously named a toolbox under that given name).
+ *
+ * @returns {boolean} If toolbox name is taken.
+ */
+WorkspaceFactoryModel.prototype.toolboxNameIsTaken = function(name) {
+  // TODO: implement
+};
+
+/**
+ * Returns true if XML string of given toolbox contains no blocks nor
+ * categories. A toolbox is considered empty if and only if the XML string contains
+ * only the opening and closing xml tags (with or without attributes) (e.g.
+ * '<xml></xml>' or '<xml id=""></xml>', etc.), and if there is only whitespace
+ * between the xml tags (and no alphanumeric/symbol values).
+ *
+ * @param {string} xml XML String to be compared.
+ * @returns {boolean} If toolbox is empty.
+ */
+WorkspaceFactoryModel.prototype.isEmptyToolbox = function(xml) {
+
 };
 
 /**
