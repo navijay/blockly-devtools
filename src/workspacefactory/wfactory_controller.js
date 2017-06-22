@@ -977,7 +977,6 @@ WorkspaceFactoryController.prototype.importFile = function(file, importMode, fil
   }
 
   Blockly.Events.disable();
-  var controller = this;
   var reader = new FileReader();
 
   // To be executed when the reader has read the file.
@@ -988,37 +987,48 @@ WorkspaceFactoryController.prototype.importFile = function(file, importMode, fil
       var tree = Blockly.Xml.textToDom(reader.result);
       if (importMode == WorkspaceFactoryController.MODE_TOOLBOX) {
         // Switch mode.
-        controller.setMode(WorkspaceFactoryController.MODE_TOOLBOX);
+        this.setMode(WorkspaceFactoryController.MODE_TOOLBOX);
 
         // Confirm that the user wants to override their current toolbox.
-        var hasToolboxElements = controller.model.hasElements() ||
-            controller.toolboxWorkspace.getAllBlocks().length > 0;
-        if (hasToolboxElements &&
-            !confirm('Are you sure you want to import? You will lose your ' +
-            'current toolbox.')) {
-            return;
+        // var hasToolboxElements = this.model.hasElements() ||
+        //     this.toolboxWorkspace.getAllBlocks().length > 0;
+        // if (hasToolboxElements &&
+        //     !confirm('Are you sure you want to import? You will lose your ' +
+        //     'current toolbox.')) {
+        //     return;
+        // }
+
+        // Save currently active toolbox.
+        if (!this.saveToolbox()) {
+          return;
         }
 
         if (fileType == WorkspaceFactoryController.MODE_XML) {
           // Import toolbox XML.
-          controller.importToolboxFromTree_(tree);
+          this.importToolboxFromTree_(tree);
         } else {
           // Run JS code to store XML, get toolboxName to retrieve XML.
           let toolboxName = this.generator.loadXml(reader.result,
               importMode);
 
           // Display toolbox on devtools workspace.
-          controller.importToolboxFromTree_(
-              Blockly.Xml.textToDom(
-                this.generator.BLOCKLY_TOOLBOX_XML[toolboxName]));
+          this.currentToolbox = toolboxName;
+          this.toolboxList[this.currentToolbox] =
+          this.showToolbox();
+          // this.importToolboxFromTree_(
+          //     Blockly.Xml.textToDom(
+          //       this.generator.BLOCKLY_TOOLBOX_XML[toolboxName]));
+          // TODO(celinechoo): Allow uploading through the controller.toolboxList
+          // route. Allow uploading and adding into the list.
+
         }
 
       } else if (importMode == WorkspaceFactoryController.MODE_PRELOAD) {
         // Switch mode.
-        controller.setMode(WorkspaceFactoryController.MODE_PRELOAD);
+        this.setMode(WorkspaceFactoryController.MODE_PRELOAD);
 
         // Confirm that the user wants to override their current blocks.
-        if (controller.toolboxWorkspace.getAllBlocks().length > 0 &&
+        if (this.toolboxWorkspace.getAllBlocks().length > 0 &&
             !confirm('Are you sure you want to import? You will lose your ' +
             'current workspace blocks.')) {
             return;
@@ -1026,14 +1036,14 @@ WorkspaceFactoryController.prototype.importFile = function(file, importMode, fil
 
         if (fileType == WorkspaceFactoryController.MODE_XML) {
           // Import pre-loaded workspace XML.
-          controller.importPreloadFromTree_(tree);
+          this.importPreloadFromTree_(tree);
         } else {
           // Run JS code to store XML, get workspaceName to retrieve XML.
           let workspaceName = this.generator.loadXml(reader.result,
               importMode);
 
           // Display pre-loaded workspace on devtools workspace.
-          controller.importPreloadFromTree_(
+          this.importPreloadFromTree_(
               Blockly.Xml.textToDom(
                 this.generator.BLOCKLY_PRELOAD_XML[workspaceName]));
         }
