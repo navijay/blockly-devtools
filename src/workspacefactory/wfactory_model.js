@@ -36,28 +36,49 @@
  */
 WorkspaceFactoryModel = function() {
   // Ordered list of ListElement objects. Empty if there is a single flyout.
+  // @type {!Array.<string>}
   this.toolboxList = [];
+
   // ListElement for blocks in a single flyout. Null if a toolbox exists.
+  // @type {!ListElement}
   this.flyout = new ListElement(ListElement.TYPE_FLYOUT);
+
   // Array of block IDs for all user created shadow blocks.
+  // @type {!Array.<string>}
   this.shadowBlocks = [];
+
   // Reference to currently selected ListElement. Stored in this.toolboxList if
   // there are categories, or in this.flyout if blocks are displayed in a single
   // flyout.
+  // @type {!ListElement}
   this.selected = this.flyout;
+
   // Boolean for if a Variable category has been added.
+  // @type {boolean}
   this.hasVariableCategory = false;
+
   // Boolean for if a Procedure category has been added.
+  // @type {boolean}
   this.hasProcedureCategory = false;
+
   // XML to be pre-loaded to workspace. Empty on default;
+  // @type {!Blockly.Xml}
   this.preloadXml = Blockly.Xml.textToDom('<xml></xml>');
+
   // Options object to be configured for Blockly inject call.
+  // @type {!Blockly.Options}
   this.options = new Object(null);
+
   // Block Library block types.
+  // @type {!Array.<string>}
   this.libBlockTypes = [];
+
   // Imported block types.
+  // @type {!Array.<string>}
   this.importedBlockTypes = [];
+
   // Dictionary of toolboxes. Has at least one (default) toolbox.
+  // @type {!Object.<string, string>}
   this.toolboxList = {
     '': '<xml></xml>'
   };
