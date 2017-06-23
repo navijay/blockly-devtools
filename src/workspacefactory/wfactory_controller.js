@@ -33,6 +33,7 @@
  *
  * @author Emma Dauterman (evd2014)
  */
+ 'use strict';
 
  goog.require('FactoryUtils');
  goog.require('StandardCategories');
@@ -45,11 +46,45 @@
  * @param {string} previewDiv Name of div to inject preview workspace in.
  * @constructor
  */
-WorkspaceFactoryController = function(toolboxName, toolboxDiv, previewDiv) {
+function WorkspaceFactoryController(toolboxName, toolboxDiv, previewDiv) {
   // Toolbox XML element for the editing workspace.
   this.toolbox = document.getElementById(toolboxName);
+  // Currently displayed toolbox. Upon init, the current toolbox name is
+  // the default toolbox name, which is the empty string. Users are forced
+  // to rename this once they create multiple toolboxes.
+  // @type {string}
+  this.currentToolbox = '';
+
+  // Model to keep track of categories and blocks.
+  // @type {WorkspaceFactoryModel}
+  this.model = new WorkspaceFactoryModel();
+
+  // Updates the category tabs.
+  // @type {WorkspaceFactoryView}
+  this.view = new WorkspaceFactoryView();
+
+  // Generates XML for categories.
+  // @type {WorkspaceFactoryGenerator}
+  this.generator = new WorkspaceFactoryGenerator(this.model);
+
+  // Tracks which editing mode the user is in. Toolbox mode on start.
+  // @type {string}
+  this.selectedMode = WorkspaceFactoryController.MODE_TOOLBOX;
+
+  // True if key events are enabled, false otherwise.
+  // @type {boolean}
+  this.keyEventsEnabled = true;
+
+  // True if there are unsaved changes in the toolbox, false otherwise.
+  // @type {boolean}
+  this.hasUnsavedToolboxChanges = false;
+
+  // True if there are unsaved changes in the preloaded blocks, false otherwise.
+  // @type {boolean}
+  this.hasUnsavedPreloadChanges = false;
 
   // Workspace for user to drag blocks in for a certain category.
+  // @type {!Blockly.Workspace}
   this.toolboxWorkspace = Blockly.inject(toolboxDiv,
     {grid:
       {spacing: 25,
@@ -61,6 +96,7 @@ WorkspaceFactoryController = function(toolboxName, toolboxDiv, previewDiv) {
      });
 
   // Workspace for user to preview their changes.
+  // @type {!Blockly.Workspace}
   this.previewWorkspace = Blockly.inject(previewDiv,
     {grid:
       {spacing: 25,
@@ -68,27 +104,12 @@ WorkspaceFactoryController = function(toolboxName, toolboxDiv, previewDiv) {
        colour: '#ccc',
        snap: true},
      media: 'media/',
-     toolbox: '<xml></xml>',
+     toolbox: this.model.toolboxList[this.currentToolbox],
      zoom:
        {controls: true,
         wheel: true}
     });
-
-  // Model to keep track of categories and blocks.
-  this.model = new WorkspaceFactoryModel();
-  // Updates the category tabs.
-  this.view = new WorkspaceFactoryView();
-  // Generates XML for categories.
-  this.generator = new WorkspaceFactoryGenerator(this.model);
-  // Tracks which editing mode the user is in. Toolbox mode on start.
-  this.selectedMode = WorkspaceFactoryController.MODE_TOOLBOX;
-  // True if key events are enabled, false otherwise.
-  this.keyEventsEnabled = true;
-  // True if there are unsaved changes in the toolbox, false otherwise.
-  this.hasUnsavedToolboxChanges = false;
-  // True if there are unsaved changes in the preloaded blocks, false otherwise.
-  this.hasUnsavedPreloadChanges = false;
-};
+}
 
 // Toolbox editing mode. Changes the user makes to the workspace updates the
 // toolbox.
@@ -100,6 +121,72 @@ WorkspaceFactoryController.MODE_PRELOAD = 'PRELOAD';
 // Language for import/export. JS for web, XML for iOS and Android.
 WorkspaceFactoryController.MODE_JS = 'javascript';
 WorkspaceFactoryController.MODE_XML = 'xml';
+
+/**
+ * Creates a new toolbox for editing. Saves previously edited toolbox, and prompts
+ * user if previous toolbox has not been saved under a user-specified name. Initial
+ * default name of toolbox is the empty string, and is considered an un-named
+ * toolbox that the user will eventually rename if they add another toolbox.
+ */
+WorkspaceFactoryController.prototype.newToolbox = function() {
+  // TODO: implement
+  // Prompt user for name of new toolbox.
+  // Check if name is valid / taken.
+  // If taken, prompt again.
+  // If not taken, model.addToolbox(newName).
+  // Show toolbox after successful naming.
+  console.log('WorkspaceFactoryController.newToolbox() called!');
+};
+
+/**
+ * Saves XML currently in workspace into currently active toolbox under this.toolboxList.
+ *
+ * @returns {Promise} If saved successfully, resolve with true; else reject with
+ *     error message string.
+ */
+WorkspaceFactoryController.prototype.saveToolbox = function() {
+  // TODO: implement
+  // Check if current toolbox has a name (model.ifNamedToolbox()).
+  // If no name, prompt user to name current toolbox.
+  // If named, model.updateToolboxFromXml(model.currentToolbox).
+  // Use Promise.then() to catch for failures.
+  console.log('WorkspaceFactoryController.saveToolbox() called!');
+};
+
+/**
+ * Changes view to display a different or new toolbox to edit.
+ *
+ * @param {string} name Name of toolbox to display.
+ * @returns {Promise} If displayed successfully, resolve with true; else reject
+ *     with error message string.
+ */
+WorkspaceFactoryController.prototype.showToolbox = function(name) {
+  // TODO: implement
+  // Check if name exists (model.toolboxNameIsTaken()).
+  // If exists, display model.toolboxList[name].
+  // If name DNE within list, prompt user.
+  console.log('WorkspaceFactoryController.showToolbox() called!');
+};
+
+/**
+ * Renames current toolbox to given new name. If name is taken, user has option to
+ * replace toolbox under that name or cancel. Renaming toolbox fails if new name is
+ * null, the empty string, or already taken. Prompts user again for new name
+ * if necessary.
+ *
+ * @param {string} originalName Original name of toolbox.
+ * @param {string} newName New name of toolbox.
+ * @returns {Promise} If renamed successfully, resolve with true; else reject with error
+ *     message string.
+ */
+WorkspaceFactoryController.prototype.renameToolbox = function(originalName, newName) {
+  // TODO: implement
+  // Prompt user for new toolbox name
+  // Check if newName is valid (model.toolboxNameIsTaken())
+  // If valid, model.renameToolbox(originalName, newName)
+  // Else prompt again.
+  console.log('WorkspaceFactoryController.renameToolbox() called!');
+};
 
 /**
  * Currently prompts the user for a name, checking that it's valid (not used
@@ -399,6 +486,38 @@ WorkspaceFactoryController.prototype.exportJsFile = function(exportMode) {
   // Download file.
   var data = new Blob([configJs], {type: 'text/javascript'});
   this.view.createAndDownloadFile(fileName + '.js', data);
+};
+
+/**
+ * Tied to "Export" button. Gets multiple file names from user to download
+ * all toolboxes defined within application. Downloads as XML files. Prompts
+ * user n number of times for n toolboxes in file (will be updated to more
+ * efficient method later).
+ *
+ * @param {string} exportMode Component of project being exported; either
+ *     toolbox (WorkspaceFactoryController.MODE_TOOLBOX) or preloaded workspace
+ *     (WorkspaceFactoryController.MODE_PRELOAD).
+ * @returns {Promise} Resolves if exported all files successfully, rejects if
+ *     exporting process ends incompletely.
+ */
+WorkspaceFactoryController.prototype.exportAllXml = function(exportMode) {
+  // TODO: implement
+};
+
+/**
+ * Tied to "Export" button. Gets multiple file names from user to download
+ * all toolboxes defined within application. Downloads as JavaScript file.
+ * Prompts the user n number of times for n toolboxes in file (will be updated
+ * to more efficient method later).
+ *
+ * @param {string} exportMode Component of project being exported; either
+ *     toolbox (WorkspaceFactoryController.MODE_TOOLBOX) or preloaded workspace
+ *     (WorkspaceFactoryController.MODE_PRELOAD).
+ * @returns {Promise} Resolves if exported all files successfully, rejects if
+ *     exporting process ends incompletely.
+ */
+WorkspaceFactoryController.prototype.exportAllJs = function(exportMode) {
+  // TODO: implement
 };
 
 /**
@@ -964,26 +1083,34 @@ WorkspaceFactoryController.prototype.importPreloadFromTree_ = function(tree) {
  * Clears the editing area completely, deleting all categories and all
  * blocks in the model and view and all pre-loaded blocks. Tied to the
  * "Clear" button.
+ *
+ * @param {boolean} shouldConfirm Whether user should first confirm before clearing
+ *     workspace.
+ * @returns {Promise} Resolves if successfully cleared workspace; rejects if
+ *     user cancelled clearing.
  */
-WorkspaceFactoryController.prototype.clearAll = function() {
-  if (!confirm('Are you sure you want to clear all of your work in Workspace' +
-      ' Factory?')) {
-    return;
-  }
-  var hasCategories = this.model.hasElements();
-  this.model.clearToolboxList();
-  this.view.clearToolboxTabs();
-  this.model.savePreloadXml(Blockly.Xml.textToDom('<xml></xml>'));
-  this.view.addEmptyCategoryMessage();
-  this.view.updateState(-1, null);
-  this.toolboxWorkspace.clear();
-  this.toolboxWorkspace.clearUndo();
-  this.saveStateFromWorkspace();
-  this.hasUnsavedToolboxChanges = false;
-  this.hasUnsavedPreloadChanges = false;
-  this.view.setCategoryOptions(this.model.hasElements());
-  this.generateNewOptions();
-  this.updatePreview();
+WorkspaceFactoryController.prototype.clearAll = function(shouldConfirm) {
+  return new Promise((resolve, reject) => {
+    if (shouldConfirm && !confirm('Are you sure you want to clear all of your ' +
+        'work in Workspace Factory?')) {
+      reject();
+    }
+    var hasCategories = this.model.hasElements();
+    this.model.clearToolboxList();
+    this.view.clearToolboxTabs();
+    this.model.savePreloadXml(Blockly.Xml.textToDom('<xml></xml>'));
+    this.view.addEmptyCategoryMessage();
+    this.view.updateState(-1, null);
+    this.toolboxWorkspace.clear();
+    this.toolboxWorkspace.clearUndo();
+    this.saveStateFromWorkspace();
+    this.hasUnsavedToolboxChanges = false;
+    this.hasUnsavedPreloadChanges = false;
+    this.view.setCategoryOptions(this.model.hasElements());
+    this.generateNewOptions();
+    this.updatePreview();
+    resolve();
+  });
 };
 
 /*

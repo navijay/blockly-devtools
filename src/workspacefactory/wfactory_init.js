@@ -247,6 +247,18 @@ WorkspaceFactoryInit.assignWorkspaceFactoryClickHandlers_ =
         controller.exportJsFile(WorkspaceFactoryController.MODE_TOOLBOX);
         blocklyFactory.closeModal();
       });
+  document.getElementById('dropdown_exportAllToolboxXML').addEventListener
+      ('click',
+      function() {
+        controller.exportAllXml(WorkspaceFactoryController.MODE_TOOLBOX);
+        blocklyFactory.closeModal();
+      });
+  document.getElementById('dropdown_exportAllToolboxJS').addEventListener
+      ('click',
+      function() {
+        controller.exportAllJs(WorkspaceFactoryController.MODE_TOOLBOX);
+        blocklyFactory.closeModal();
+      });
   document.getElementById('dropdown_exportPreloadXML').addEventListener
       ('click',
       function() {
@@ -273,11 +285,25 @@ WorkspaceFactoryInit.assignWorkspaceFactoryClickHandlers_ =
         blocklyFactory.openModal('dropdownDiv_export');
       });
 
+  // Add toolbox button.
+  document.getElementById('button_newToolbox').addEventListener
+      ('click',
+      function() {
+        controller.newToolbox();
+      });
+
+  // Add toolbox button.
+  document.getElementById('button_saveToolbox').addEventListener
+      ('click',
+      function() {
+        controller.saveToolbox();
+      });
+
   // Clear button.
   document.getElementById('button_clear').addEventListener
       ('click',
       function() {
-        controller.clearAll();
+        controller.clearAll(true);
       });
 
   // Toolbox and Workspace tabs.
