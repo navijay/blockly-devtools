@@ -82,6 +82,10 @@ WorkspaceFactoryModel = function() {
   this.toolboxList = {
     '': '<xml></xml>'
   };
+
+  // Keeps track of toolbox currently displayed in view.
+  // @type {string}
+  this.currentToolbox = '';
 };
 
 // TOOLBOX METHODS.
@@ -95,7 +99,17 @@ WorkspaceFactoryModel = function() {
  *     to list of toolboxes; rejects with error message if name is invalid.
  */
 WorkspaceFactoryModel.prototype.addToolbox = function(name) {
-  // TODO: Implement.
+  return new Promise((resolve, reject) => {
+    if (/( |\n)*/g.test(name)) {
+      reject('You cannot name with only whitespace.');
+    } else if (this.toolboxNameIsTaken) {
+      reject('This name is already taken.');
+    } else {
+      name = FactoryUtils.addEscape(name);
+      this.toolboxList[name] = '<xml></xml>';
+      resolve(name);
+    }
+  });
 };
 
 /**
@@ -104,7 +118,7 @@ WorkspaceFactoryModel.prototype.addToolbox = function(name) {
  * @returns {boolean} If named.
  */
 WorkspaceFactoryModel.prototype.ifNamedToolbox = function() {
-  // TODO: Implement.
+  return /( |\n)*/g.test(this.currentToolbox);
 };
 
 /**
@@ -127,10 +141,23 @@ WorkspaceFactoryModel.prototype.updateToolboxFromXml = function(name, xml) {
  *
  * @param {string} oldName Original name of toolbox to change to newName.
  * @param {string} newName New name of toolbox to change from oldName.
- * @returns {boolean} If renamed successfully.
+ * @returns {Promise} Resolves if renamed successfully, rejects if
+ *    name of toolbox is invalid or other errors arise.
  */
 WorkspaceFactoryModel.prototype.renameToolbox = function(oldName, newName) {
-  // TODO: Implement.
+  return new Promise((resolve, reject) => {
+    this.addToolbox(newName).then(
+        (name) => {
+          // Resolved.
+          this.toolboxList[newName] = this.toolboxList[oldName];
+          delete this.toolboxList[oldName];
+          resolve(name);
+        },
+        (errorMsg) => {
+          // Rejected.
+          reject(errorMsg);
+        });
+  });
 };
 
 /**

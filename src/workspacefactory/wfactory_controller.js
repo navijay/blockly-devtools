@@ -56,15 +56,15 @@ function WorkspaceFactoryController(toolboxName, toolboxDiv, previewDiv) {
   this.currentToolbox = '';
 
   // Model to keep track of categories and blocks.
-  // @type {WorkspaceFactoryModel}
+  // @type {!WorkspaceFactoryModel}
   this.model = new WorkspaceFactoryModel();
 
   // Updates the category tabs.
-  // @type {WorkspaceFactoryView}
+  // @type {!WorkspaceFactoryView}
   this.view = new WorkspaceFactoryView();
 
   // Generates XML for categories.
-  // @type {WorkspaceFactoryGenerator}
+  // @type {!WorkspaceFactoryGenerator}
   this.generator = new WorkspaceFactoryGenerator(this.model);
 
   // Tracks which editing mode the user is in. Toolbox mode on start.
@@ -136,6 +136,48 @@ WorkspaceFactoryController.prototype.newToolbox = function() {
   // If not taken, model.addToolbox(newName).
   // Show toolbox after successful naming.
   console.log('WorkspaceFactoryController.newToolbox() called!');
+  if (!this.model.ifNamedToolbox()) {
+    if (this.model.isEmptyToolbox(this.toolboxList[''])) {
+      return;
+    }
+
+    let defaultName = prompt('Your default toolbox is not named. Please provide a name.');
+    this.model.renameToolbox(defaultName).then(
+        (name) => {
+          // Resolved
+        },
+        (errorMsg) => {
+          // Rejected.
+          console.log('New toolbox failed.');
+          defaultName = prompt('Invalid name. ' + errorMsg + ' Please enter another name.');
+          this.newToolbox();
+          return;
+        });
+  }
+
+  this.saveToolbox();
+
+  let newToolboxName = prompt('Enter the name of your new toolbox.');
+  this.model.addToolbox(newToolboxName).then(
+      (name) => {
+        // Resolved
+        newToolboxName = name;
+      },
+      (errorMsg) => {
+        // Rejected
+        console.log('New toolbox failed.');
+        newToolboxName = ('Invalid name. ' + errorMsg + ' Please enter another name.');
+        this.newToolbox();
+        return;
+      });
+
+  this.showToolbox(newToolboxName).then(
+      (name) => {
+        // Resolved
+      },
+      () => {
+        // Rejected
+      });
 };
 
 /**
@@ -151,6 +193,13 @@ WorkspaceFactoryController.prototype.saveToolbox = function() {
   // If named, model.updateToolboxFromXml(model.currentToolbox).
   // Use Promise.then() to catch for failures.
   console.log('WorkspaceFactoryController.saveToolbox() called!');
+  // Get toolbox from workspaces
+  return new Promise((resolve, reject) => {
+    let toolboxXml = Blockly.Xml.domToPrettyText
+        (this.generator.generateToolboxXml());
+    this.toolboxList[this.currentToolbox] = toolboxXml;
+  });
+
 };
 
 /**
@@ -166,26 +215,15 @@ WorkspaceFactoryController.prototype.showToolbox = function(name) {
   // If exists, display model.toolboxList[name].
   // If name DNE within list, prompt user.
   console.log('WorkspaceFactoryController.showToolbox() called!');
-};
-
-/**
- * Renames current toolbox to given new name. If name is taken, user has option to
- * replace toolbox under that name or cancel. Renaming toolbox fails if new name is
- * null, the empty string, or already taken. Prompts user again for new name
- * if necessary.
- *
- * @param {string} originalName Original name of toolbox.
- * @param {string} newName New name of toolbox.
- * @returns {Promise} If renamed successfully, resolve with true; else reject with error
- *     message string.
- */
-WorkspaceFactoryController.prototype.renameToolbox = function(originalName, newName) {
-  // TODO: implement
-  // Prompt user for new toolbox name
-  // Check if newName is valid (model.toolboxNameIsTaken())
-  // If valid, model.renameToolbox(originalName, newName)
-  // Else prompt again.
-  console.log('WorkspaceFactoryController.renameToolbox() called!');
+  return new Promise((resolve, reject) => {
+    if (!model.toolboxNameIsTaken(name)) {
+      reject();
+    } else {
+      // show toolbox
+      this.model.currentToolbox = name;
+      resolve(name);
+    }
+  });
 };
 
 /**
