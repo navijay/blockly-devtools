@@ -35,13 +35,14 @@ class Toolbox extends BlockCollection {
    * @param {string} newName New name of toolbox.
    */
   setName(newName) {
-    console.log('setName() called!')
+    console.log('setName() called!');
     // TODO: Implement function.
   }
 
   /**
    * Adds block to toolbox.
-   * @returns {boolean} True if added succesfully.
+   * @returns {boolean} True if added succesfully, false if name is invalid
+   *     or taken.
    */
   addBlock(categoryName, blockName, xmlDefinition) {
     console.log('Add block called!');
@@ -64,7 +65,7 @@ class Toolbox extends BlockCollection {
    *
    * @returns {string} String representation of JS file to be exported.
    */
-  exportJs() {
+  buildJsString() {
     // TODO: Implement function.
     console.log('exportJs() called.');
   }
@@ -75,10 +76,12 @@ class Toolbox extends BlockCollection {
    *
    * @returns {string} String representation of XML file to be exported.
    */
-  exportXml() {
+  buildXmlString() {
     // TODO: Implement function.
     console.log('exportXml() called.');
   }
+
+  .
 
   /**
    * Returns true if given category name already exists within toolbox.
