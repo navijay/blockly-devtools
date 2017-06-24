@@ -24,7 +24,7 @@
  * @author Celine Choo (celinechoo)
  */
 
-class Toolbox extends BlockCollection {
+class Toolbox extends Resource {
   constructor(name) {
     this.name = name;
     this.xmlDefinitions = {};
@@ -80,8 +80,6 @@ class Toolbox extends BlockCollection {
     // TODO: Implement function.
     console.log('exportXml() called.');
   }
-
-  .
 
   /**
    * Returns true if given category name already exists within toolbox.

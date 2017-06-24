@@ -19,13 +19,13 @@
  */
 
 /**
- * @fileoverview WorkspacePreload object. Contains a set of positioned blocks,
- *   often used to initialize an app's blank workspace.
+ * @fileoverview BlockLibrary object. Contains references to controller and
+ *    view.
  *
  * @author
  */
 
-class WorkspacePreload extends Resource {
+class BlockLibrary extends Resource {
   constructor() {
 
   }

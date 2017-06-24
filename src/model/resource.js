@@ -19,16 +19,15 @@
  */
 
 /**
- * @fileoverview WorkspacePreload object. Contains a set of positioned blocks,
- *   often used to initialize an app's blank workspace.
+ * @fileoverview The Resource object is the abstract parent class for all
+ *   potential groupings of blocks in Blockly DevTools.
  *
- * @author
  */
 
-class WorkspacePreload extends Resource {
+class Resource {
   constructor() {
 
   }
 
-  //TODO: Add functions.
+  //TODO: Add functions, attributes, etc.
 }
