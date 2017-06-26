@@ -27,7 +27,7 @@
 class Toolbox extends Resource {
   constructor(name) {
     this.name = name;
-    this.xmlDefinitions = {};
+    this.xmlString = '<xml></xml>';
   }
 
   /**
@@ -35,8 +35,7 @@ class Toolbox extends Resource {
    * @param {string} newName New name of toolbox.
    */
   setName(newName) {
-    console.log('setName() called!');
-    // TODO: Implement function.
+    this.name = newName;
   }
 
   /**
@@ -97,6 +96,15 @@ class Toolbox extends Resource {
    * @returns {boolean} Whether the toolbox is empty.
    */
   isEmpty() {
-    // TODO: Implement function.
+    let xml = this.xmlString;
+    let xmlTagRegEx = /<.*>/g;
+
+    if (xmlTagRegEx.match(xml).length == 2) {
+      return true;
+    } else if (/ */.test(xml)) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }

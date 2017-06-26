@@ -26,8 +26,65 @@
 
 class Project {
   constructor() {
-
+    /// Dictionary mapping {string} toolbox names to Toolboxes.
+    // @type {!Object.<string, string>}
+    this.toolboxes = {
+      '': new Toolbox('')
+    };
   }
 
-  //TODO: Add functions.
+  /**
+   * Creates a new toolbox for users to modify and edit.
+   *
+   * @param {string} name Name of new toolbox to add.
+   * @param {Promise} Resolves with true if name is valid and successfully added
+   *     to list of toolboxes; rejects with error message if name is invalid.
+   */
+  addToolbox(name) {
+    return new Promise((resolve, reject) => {
+      let isWhitespace = /( |\n)*/g.test(name);
+
+      if (isWhitespace) {
+        reject('You cannot name with only whitespace.');
+      } else if (!this.toolboxes[name]) {
+        reject('This name is already taken.');
+      } else {
+        name = FactoryUtils.addEscape(name);
+        this.toolboxes[name] = new Toolbox(name);
+        resolve(name);
+      }
+    });
+  }
+
+  /**
+   * Renames toolbox from oldName to newName. Catches for duplicates and invalid
+   * names (empty strings, etc.).
+   *
+   * @param {string} oldName Original name of toolbox to change to newName.
+   * @param {string} newName New name of toolbox to change from oldName.
+   * @returns {Promise} Resolves if renamed successfully, rejects if
+   *    name of toolbox is invalid or other errors arise.
+   */
+  renameToolbox(oldName, newName) {
+    return new Promise((resolve, reject) => {
+      this.addToolbox(newName).then(
+          (newName) => {
+            // Resolved.
+            // Reset name in toolbox object.
+            this.toolboxes[oldName].setName(newName);
+            // Create new element in this.toolboxes for new name.
+            this.toolboxList[newName] = this.toolboxList[oldName];
+            delete this.toolboxes[oldName];
+            resolve(name);
+          },
+          (errorMsg) => {
+            // Rejected.
+            reject(errorMsg);
+          });
+    });
+  }
+
+  ifNamedToolbox(name) {
+    return /( |\n)*/g.test(name);
+  }
 }
