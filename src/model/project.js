@@ -50,7 +50,7 @@ class Project {
    */
   addToolbox(name) {
     return new Promise((resolve, reject) => {
-      if (ifNamedToolbox(name)) {
+      if (Project.ifNamedToolbox(name)) {
         reject('You cannot name with only whitespace.');
       } else if (!this.toolboxes[name]) {
         reject('This name is already taken.');

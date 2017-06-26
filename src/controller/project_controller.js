@@ -114,7 +114,7 @@ class ProjectController {
     return new Promise((resolve, reject) => {
       let toolboxXml = Blockly.Xml.domToPrettyText
           (this.generator.generateToolboxXml());
-      this.toolboxList[this.currentToolbox] = toolboxXml;
+      this.project.toolboxes[this.active.toolbox].updateXml(toolboxXml);
     });
   }
 
@@ -126,10 +126,6 @@ class ProjectController {
    *     with error message string.
    */
   showToolbox(name) {
-    // TODO: implement
-    // Check if name exists (model.toolboxNameIsTaken()).
-    // If exists, display model.toolboxList[name].
-    // If name DNE within list, prompt user.
     console.log('WorkspaceFactoryController.showToolbox() called!');
     return new Promise((resolve, reject) => {
       if (!this.project.toolboxes[name]) {
@@ -147,9 +143,18 @@ class ProjectController {
     });
   }
 
-  exportAll() {
+  /**
+   * Saves entire project (defined blocks, toolboxes, preload workspaces) to
+   * developer's file system. Generates popup for user to decide where to save.
+   */
+  saveToFileSystem() {
+    // Save current work.
     this.saveLibrary();
     this.saveToolbox();
     this.saveWorkspace();
+
+    // TODO: Retrieve strings needed to generate files.
+
+    // TODO: Generate popup for saving entire project.
   }
 }

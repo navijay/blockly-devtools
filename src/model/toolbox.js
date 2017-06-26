@@ -39,6 +39,16 @@ class Toolbox extends Resource {
   }
 
   /**
+   * Given XML string, updates xmlString field.
+   *
+   * @param {string} xmlString String representation of XML corresponding to
+   *     toolbox object.
+   */
+  updateXml(xmlString) {
+    this.xmlString = xmlString;
+  }
+
+  /**
    * Adds block to toolbox.
    * @returns {boolean} True if added succesfully, false if name is invalid
    *     or taken.
@@ -76,8 +86,16 @@ class Toolbox extends Resource {
    * @returns {string} String representation of XML file to be exported.
    */
   buildXmlString() {
-    // TODO: Implement function.
-    console.log('exportXml() called.');
+    console.log('buildXmlString() called.');
+    return this.xmlString();
+  }
+
+  /**
+   * Converts XML string into DOM structure.
+   * @returns {!Element} A tree of XML elements.
+   */
+  buildXml() {
+    return Blockly.Xml.textToDom(this.xmlString);
   }
 
   /**
