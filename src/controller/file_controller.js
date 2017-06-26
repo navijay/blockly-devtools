@@ -19,15 +19,15 @@
  */
 
 /**
- * @fileoverview The BlockCollection class is a collection of blocks. It is the
- *    parent class for all potential groupings of blocks in Blockly DevTools.
- *
+ * @fileoverview The FileController Class manages saving and opening projects
+ * from the local filesystem. This is different from the ProjectController class
+ * which does not deal with access to and from the filesystem.
  */
 
-class BlockCollection {
+class FileController {
   constructor() {
 
   }
 
-  //TODO: Add functions, attributes, etc.
+  //TODO #44: refactor
 }

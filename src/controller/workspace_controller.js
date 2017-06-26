@@ -19,15 +19,14 @@
  */
 
 /**
- * @fileoverview Library object. Contains references to controller and view.
- *
- * @author
+ * @fileoverview The WorkspaceController Class deals with the Blockly workspaces
+ * that are used to generate block libraries, toolboxes, and preload-workspaces.
  */
 
-class Library extends BlockCollection {
+class WorkspaceController {
   constructor() {
 
   }
 
-  //TODO: Add functions.
+  //TODO #44: refactor
 }
