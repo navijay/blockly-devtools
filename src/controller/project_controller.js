@@ -25,17 +25,32 @@
  */
 
 class ProjectController {
-  constructor() {
-    this.project = new Project();
-    this.wFactoryController = new WorkspaceFactoryController();
-    // Object which keeps track of what toolbox, workspace, or library
-    // is currently active. Stores the name of BlockCollection
-    // @type {!Object.<string, string>}
+  constructor(projectName, toolboxDiv, workspaceDiv) {
+    /**
+     * Singleton. Project object currently loaded in DevTools to be edited by
+     * developer.
+     * @type {!Project}
+     */
+    this.project = new Project(projectName);
+
+    /**
+     * (TEMPORARY UNTIL #44 IS COMPLETE)
+     * WorkspaceFactoryController object. Used to access methods within said class.
+     * @type {!WorkspaceFactoryController}
+     */
+    this.wFactoryController = new WorkspaceFactoryController('FactoryController',
+        toolboxDiv, workspaceDiv);
+
+    /**
+     * Object which keeps track of what toolbox, workspace, or library
+     * is currently active. Stores the name of BlockCollection
+     * @type {!Object.<string, string>}
+     */
     this.active = {
       library: '',
       toolbox: '',
       workspace: ''
-    }
+    };
   }
 
   /**
@@ -118,7 +133,7 @@ class ProjectController {
     console.log('WorkspaceFactoryController.showToolbox() called!');
     return new Promise((resolve, reject) => {
       if (!this.project.toolboxes[name]) {
-        reject('This toolbox does not exist.');
+        reject('This toolbox [' + name + '] does not exist.');
       } else {
         // show toolbox
         this.active.toolbox = name;
@@ -133,8 +148,8 @@ class ProjectController {
   }
 
   exportAll() {
-    // Save library
-    // Save toolbox
-
+    this.saveLibrary();
+    this.saveToolbox();
+    this.saveWorkspace();
   }
 }

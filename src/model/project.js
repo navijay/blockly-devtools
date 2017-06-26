@@ -25,9 +25,17 @@
  */
 
 class Project {
-  constructor() {
-    /// Dictionary mapping {string} toolbox names to Toolboxes.
-    // @type {!Object.<string, string>}
+  constructor(projectName) {
+    /**
+     * The name of the project.
+     * @type {string}
+     */
+    this.projectName = projectName;
+
+    /**
+     * Dictionary mapping toolbox names to toolbox controllers.
+     * @type {!Object<string, !Toolbox>}
+     */
     this.toolboxes = {
       '': new Toolbox('')
     };
@@ -36,15 +44,13 @@ class Project {
   /**
    * Creates a new toolbox for users to modify and edit.
    *
-   * @param {string} name Name of new toolbox to add.
+   * @param {string} toolbox Name of new toolbox to add.
    * @param {Promise} Resolves with true if name is valid and successfully added
    *     to list of toolboxes; rejects with error message if name is invalid.
    */
   addToolbox(name) {
     return new Promise((resolve, reject) => {
-      let isWhitespace = /( |\n)*/g.test(name);
-
-      if (isWhitespace) {
+      if (ifNamedToolbox(name)) {
         reject('You cannot name with only whitespace.');
       } else if (!this.toolboxes[name]) {
         reject('This name is already taken.');
@@ -84,7 +90,12 @@ class Project {
     });
   }
 
-  ifNamedToolbox(name) {
+  /**
+   * Verifies if current toolbox has yet been named by user.
+   *
+   * @returns {boolean} If named.
+   */
+  static ifNamedToolbox(name) {
     return /( |\n)*/g.test(name);
   }
 }
