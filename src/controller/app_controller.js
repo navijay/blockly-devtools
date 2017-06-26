@@ -42,7 +42,11 @@ goog.require('goog.ui.ColorPicker');
 AppController = function() {
   this.name = 'AppController';
 
-  // Initialize View
+  /**
+   * Overall View object which manages the visual parts of DevTools.
+   *
+   * @type {!AppView}
+   */
   this.view = new AppView(this);
 
   // Initialize Block Library
@@ -52,8 +56,24 @@ AppController = function() {
       new BlockLibraryController(this.blockLibraryName);
 
   // Construct Workspace Factory Controller.
-  this.workspaceFactoryController = new WorkspaceFactoryController
-      ('workspacefactory_toolbox', 'toolbox_blocks', 'preview_blocks');
+  // this.workspaceFactoryController = new WorkspaceFactoryController
+  //     ('workspacefactory_toolbox', 'toolbox_blocks', 'preview_blocks');
+
+  /**
+   * Controls project data I/O.
+   *
+   * @type {!ProjectController}
+   */
+  this.projectController = new ProjectController('New Project', 'workspacefactory_toolbox',
+      'toolbox_blocks', 'preview_blocks');
+
+  /**
+   * Controls user interaction with Blockly workspaces used to create project
+   * data.
+   *
+   * @type {!WorkspaceController}
+   */
+  this.workspaceController = new WorkspaceController();
 
   // Initialize Block Exporter
   this.exporter =
@@ -311,7 +331,7 @@ AppController.prototype.onTab = function() {
 
   // Only enable key events in workspace factory if workspace factory tab is
   // selected.
-  this.workspaceFactoryController.keyEventsEnabled =
+  this.projectController.wFactoryController.keyEventsEnabled =
       this.selectedTab == AppController.WORKSPACE_FACTORY;
 
   // Turn selected tab on and other tabs off.
@@ -326,10 +346,10 @@ AppController.prototype.onTab = function() {
 
     // Need accurate state in order to know which blocks are used in workspace
     // factory.
-    this.workspaceFactoryController.saveStateFromWorkspace();
+    this.projectController.wFactoryController.saveStateFromWorkspace();
 
     // Update exporter's list of the types of blocks used in workspace factory.
-    var usedBlockTypes = this.workspaceFactoryController.getAllUsedBlockTypes();
+    var usedBlockTypes = this.projectController.wFactoryController.getAllUsedBlockTypes();
     this.exporter.setUsedBlockTypes(usedBlockTypes);
 
     // Update exporter's block selector to reflect current block library.
@@ -354,7 +374,7 @@ AppController.prototype.onTab = function() {
     // Update block library category.
     var categoryXml = this.exporter.getBlockLibraryCategory();
     var blockTypes = this.blockLibraryController.getStoredBlockTypes();
-    this.workspaceFactoryController.setBlockLibCategory(categoryXml,
+    this.projectController.wFactoryController.setBlockLibCategory(categoryXml,
         blockTypes);
   }
 
@@ -632,7 +652,7 @@ AppController.prototype.onresize = function(event) {
 AppController.prototype.confirmLeavePage = function(e) {
   if ((!BlockFactory.isStarterBlock() &&
       !FactoryUtils.savedBlockChanges(blocklyFactory.blockLibraryController)) ||
-      blocklyFactory.workspaceFactoryController.hasUnsavedChanges()) {
+      blocklyFactory.projectController.wFactoryController.hasUnsavedChanges()) {
 
     var confirmationMessage = 'You will lose any unsaved changes. ' +
         'Are you sure you want to exit this page?';
@@ -738,7 +758,7 @@ AppController.prototype.init = function() {
   this.addBlockFactoryEventListeners();
 
   // Workspace Factory init.
-  WorkspaceFactoryInit.initWorkspaceFactory(this.workspaceFactoryController);
+  WorkspaceFactoryInit.initWorkspaceFactory(this.projectController.wFactoryController);
 };
 
 /**

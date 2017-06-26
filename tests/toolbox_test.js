@@ -25,7 +25,7 @@
 
 'use strict';
 
-inputTestVar = {
+let inputTestVar = {
   // JS special characters that need escape sequences
   specialChars: ['\'', '\\', '\\n', '\\0',
       '\\v', '\\r', '\\b', '\\t', '\\f'],
@@ -65,7 +65,8 @@ let sampleXml =
  * DevTools.
  */
 function test_toolboxInit() {
-  let controller = new ProjectController('toolboxDiv', 'previewDiv');
+  let controller = new ProjectController('NewProject', 'toolboxName',
+      'toolboxDiv', 'previewDiv');
 
   assertEquals('FAILED: toolboxList does not have just one element upon init.',
       1, len(controller));
@@ -81,7 +82,8 @@ function test_toolboxInit() {
  * Tests WorkspaceFactoryModel.addToolbox().
  */
 function test_addToolbox_simple() {
-  let controller = new ProjectController('toolboxDiv', 'previewDiv');
+  let controller = new ProjectController('NewProject', 'toolboxName',
+      'toolboxDiv', 'previewDiv');
   let project = controller.project;
 
   assertEquals('FAILED: Toolbox count incorrect.',
@@ -107,7 +109,8 @@ function test_addToolbox_simple() {
  * Tests WorkspaceFactoryModel.addToolbox() with special characters.
  */
 function test_addToolbox_specialChar() {
-  let controller = new ProjectController('toolboxDiv', 'previewDiv');
+  let controller = new ProjectController('NewProject', 'toolboxName',
+      'toolboxDiv', 'previewDiv');
   let project = controller.project;
 
   assertEquals('FAILED: Toolbox count incorrect.',
@@ -148,7 +151,8 @@ function test_addToolbox_specialChar() {
  * default toolbox (the empty string).
  */
 function test_ifNamedToolbox() {
-  let controller = new ProjectController('toolboxDiv', 'previewDiv');
+  let controller = new ProjectController('NewProject', 'toolboxName',
+      'toolboxDiv', 'previewDiv');
   let project = controller.project;
 
   assertFalse('FAILED: toolboxList should contain one unnamed toolbox upon init.',
@@ -175,7 +179,8 @@ function test_ifNamedToolbox() {
  * toolbox.
  */
 function test_renameToolbox_renameDefault() {
-  let controller = new ProjectController('toolboxDiv', 'previewDiv');
+  let controller = new ProjectController('NewProject', 'toolboxName',
+      'toolboxDiv', 'previewDiv');
   let project = controller.project;
 
   project.renameToolbox('', 'test2').then(
@@ -194,7 +199,8 @@ function test_renameToolbox_renameDefault() {
  * from non-default toolbox name to another.
  */
 function test_renameToolbox_simple() {
-  let controller = new ProjectController('toolboxDiv', 'previewDiv');
+  let controller = new ProjectController('NewProject', 'toolboxName',
+      'toolboxDiv', 'previewDiv');
   let project = controller.project;
 
   initToolbox(project, 'Test');
@@ -213,7 +219,8 @@ function test_renameToolbox_simple() {
  * Whether WorkspaceFactoryModel.renameToolbox() can rename to and from special characters.
  */
 function test_renameToolbox_specialChar() {
-  let controller = new ProjectController('toolboxDiv', 'previewDiv');
+  let controller = new ProjectController('NewProject', 'toolboxName',
+      'toolboxDiv', 'previewDiv');
   let project = controller.project;
 
   initToolbox(project, 'Test');
@@ -250,7 +257,8 @@ function test_renameToolbox_specialChar() {
  * characters.
  */
 function test_renameToolbox_space() {
-  let controller = new ProjectController('toolboxDiv', 'previewDiv');
+  let controller = new ProjectController('NewProject', 'toolboxName',
+      'toolboxDiv', 'previewDiv');
   let project = controller.project;
 
   initToolbox(project, 'Test');
@@ -273,7 +281,8 @@ function test_renameToolbox_space() {
  * characters.
  */
 function test_renameToolbox_newline() {
-  let controller = new ProjectController('toolboxDiv', 'previewDiv');
+  let controller = new ProjectController('NewProject', 'toolboxName',
+      'toolboxDiv', 'previewDiv');
   let project = controller.project;
 
   initToolbox(project, 'Test');
@@ -296,7 +305,8 @@ function test_renameToolbox_newline() {
  * characters.
  */
 function test_renameToolbox_spaceAndNewline() {
-  let controller = new ProjectController('toolboxDiv', 'previewDiv');
+  let controller = new ProjectController('NewProject', 'toolboxName',
+      'toolboxDiv', 'previewDiv');
   let project = controller.project;
 
   initToolbox(project, 'Test');
@@ -320,7 +330,8 @@ function test_renameToolbox_spaceAndNewline() {
  * as non-empty.
  */
 function test_isEmptyToolbox() {
-  let controller = new ProjectController('toolboxDiv', 'previewDiv');
+  let controller = new ProjectController('NewProject', 'toolboxName',
+      'toolboxDiv', 'previewDiv');
   let project = controller.project;
 
   // Confirm that empty toolboxes return true.
@@ -371,7 +382,8 @@ function test_isEmptyToolbox() {
  * every step (other function calls) is correctly executed.
  */
 function test_toolboxFunctions() {
-  let controller = new ProjectController('toolboxDiv', 'previewDiv');
+  let controller = new ProjectController('NewProject', 'toolboxName',
+      'toolboxDiv', 'previewDiv');
   let project = controller.project;
 
   // Making sure initial toolbox is an empty toolbox.
@@ -431,7 +443,8 @@ function test_toolboxFunctions() {
  * with the toolbox displayed on page.
  */
 function test_showToolbox() {
-  let controller = new ProjectController('toolboxDiv', 'previewDiv');
+  let controller = new ProjectController('NewProject', 'toolboxName',
+      'toolboxDiv', 'previewDiv');
   let project = controller.project;
 
   // Hard-code in a new toolbox.

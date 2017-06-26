@@ -31,13 +31,14 @@
   <script src="src/view/app_view.js"></script>
   <script src="src/new_block_dialog_view.js"></script>
   <script src="src/new_block_dialog_controller.js"></script>
-  <script src="src/view/navigation_tree.js"</script>
-  <script src="src/model/resource.js"</script>
-  <script src="src/model/project.js"</script>
-  <script src="src/model/library.js"</script>
-  <script src="src/model/workspace_preload.js"</script>
-  <script src="src/model/toolbox.js"</script>
-  <script src="src/controller/project_controller.js"</script>
+  <script src="src/view/navigation_tree.js"></script>
+  <script src="src/model/resource.js"></script>
+  <script src="src/model/project.js"></script>
+  <script src="src/model/library.js"></script>
+  <script src="src/model/workspace_preload.js"></script>
+  <script src="src/model/toolbox.js"></script>
+  <script src="src/controller/project_controller.js"></script>
+  <script src="src/controller/workspace_controller.js"></script>
   <script src="../storage.js"></script>
   <script src="node_modules/jstree/dist/jstree.min.js"></script>
   <script src="node_modules/jstree/dist/jstree.js"></script>
@@ -177,11 +178,17 @@
             <a id="dropdown_exportOptions">Starter Code</a>
             <a id="dropdown_exportToolboxXML">Toolbox as XML</a>
             <a id="dropdown_exportToolboxJS">Toolbox as JS</a>
+            <a id="dropdown_exportAllToolboxXML">All Toolboxes as XML</a>
+            <a id="dropdown_exportAllToolboxJS">All Toolboxes as JS</a>
             <a id="dropdown_exportPreloadXML">Workspace Blocks as XML</a>
             <a id="dropdown_exportPreloadJS">Workspace Blocks as JS</a>
             <a id="dropdown_exportAll">All</a>
           </div>
         </div>
+
+        <button id="button_newToolbox">New Toolbox</button>
+
+        <button id="button_saveToolbox">Save Toolbox</button>
 
         <button id="button_clear">Clear</button>
 

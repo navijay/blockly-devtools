@@ -25,7 +25,7 @@
  */
 
 class ProjectController {
-  constructor(projectName, toolboxDiv, workspaceDiv) {
+  constructor(projectName, toolboxName, toolboxDiv, workspaceDiv) {
     /**
      * Singleton. Project object currently loaded in DevTools to be edited by
      * developer.
@@ -38,7 +38,7 @@ class ProjectController {
      * WorkspaceFactoryController object. Used to access methods within said class.
      * @type {!WorkspaceFactoryController}
      */
-    this.wFactoryController = new WorkspaceFactoryController('FactoryController',
+    this.wFactoryController = new WorkspaceFactoryController(toolboxName,
         toolboxDiv, workspaceDiv);
 
     /**

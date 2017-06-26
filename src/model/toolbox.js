@@ -26,6 +26,7 @@
 
 class Toolbox extends Resource {
   constructor(name) {
+    super();
     this.name = name;
     this.xmlString = '<xml></xml>';
   }
